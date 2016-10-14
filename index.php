@@ -1,28 +1,50 @@
 <?php
 
+ini_set ( 'display_errors', -1 );
+
 class session
 {
     public function __construct ()
     {
-        if ( session_status () == PHP_SESSION_NONE )
+        session_set_cookie_params ( 5 );
+        if ( session_status () === PHP_SESSION_ACTIVE )
         {
-            session_set_cookie_params ( 3600 );
-            session_start ();
-            $_SESSION = array ();
+            if ( !isset ( $_SESSION [ 'id' ] ) || $_SESSION [ 'id' ] !== session_id () )
+            {
+                $this->start();
+            }
         }
+        elseif ( session_status () === PHP_SESSION_NONE )
+        {
+            session_start ();
+            $this->start();
+        }
+        else die ( "Can't start session!" );
+    }
+
+    private function start ()
+    {
+        $_SESSION = array ();
+        $_SESSION ['id'] = session_id ();
+        $_SESSION ['start'] = microtime ();
     }
 
     public function __destruct ()
     {
-        session_commit ();
+#        session_commit ();
+#        session_destroy ();
     }
 
-    public function id ()
+    public function get ( $key )
     {
-        return session_id ();
+        return $_SESSION [ $key ];
     }
 }
 
 $session = new session ();
 
-print $session -> id ();
+print $session -> get ( 'id' );
+print '<br>';
+print $session -> get ( 'start' );
+print '<br>';
+print_r($_SESSION);
