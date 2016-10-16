@@ -4,7 +4,7 @@ class session
 {
     public function __construct ()
     {
-        $this -> set ();
+        $this -> setup ();
         session_start ();
         if ( !$this -> active () )
         {
@@ -32,7 +32,7 @@ class session
         return session_status () === PHP_SESSION_ACTIVE && isset ( $_SESSION [ 'id' ] ) && $_SESSION [ 'id' ] === session_id ();
     }
 
-    private function set ()
+    private function setup ()
     {
         session_set_cookie_params ( 10 ); //session.cookie_lifetime
         session_name ( 'private' );
@@ -45,6 +45,18 @@ class session
 
     public function get ( $key )
     {
-        return $_SESSION [ $key ];
+        if ( isset ( $_SESSION [ $key ] ) )
+        {
+            return $_SESSION [ $key ];
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public function set ( $key, $value )
+    {
+        $_SESSION [ $key ] = $value;
     }
 }
