@@ -18,7 +18,9 @@ class session
         $_SESSION [ 'start_timestamp' ] = microtime ( true );
         $_SESSION [ 'expiration_timestamp' ] = $_SESSION [ 'start_timestamp' ] + ini_get ( 'session.cookie_lifetime' );
         $now = DateTime::createFromFormat ( 'U.u', microtime ( true ) );
+        $expiration = DateTime::createFromFormat ( 'U.u', microtime ( true ) + ini_get ( 'session.cookie_lifetime' ) );
         $_SESSION [ 'start_datetime' ] = $now -> format ( "Y-m-d H:i:s.u" );
+        $_SESSION [ 'expiration_datetime' ] = $expiration -> format ( "Y-m-d H:i:s.u" );
     }
 
     public function stop ()
@@ -29,7 +31,14 @@ class session
 
     private function active ()
     {
-        return session_status () === PHP_SESSION_ACTIVE && isset ( $_SESSION [ 'id' ] ) && $_SESSION [ 'id' ] === session_id ();
+        if ( version_compare ( phpversion (), '5.4.0', '<' ) )
+        {
+            return isset ( $_SESSION [ 'id' ] ) && $_SESSION [ 'id' ] === session_id ();
+        }
+        else
+        {
+            return session_status () === PHP_SESSION_ACTIVE && isset ( $_SESSION [ 'id' ] ) && $_SESSION [ 'id' ] === session_id ();
+        }
     }
 
     private function setup ()
