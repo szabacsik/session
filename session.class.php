@@ -12,7 +12,6 @@ class session
         $this -> setup ();
         session_start ();
         if ( !$this -> active () ) $this -> start ();
-        $this->debug();
     }
 
     private function start ()
@@ -58,7 +57,7 @@ class session
         $expiration = new DateTime ( date ( 'Y-m-d H:i:s.' . $micro, $expiration ) );
         $_SESSION [ 'expiration_datetime' ] = $expiration -> format ( "Y-m-d H:i:s.u" );
     }
-    
+
     public function expired ()
     {
         return $_SESSION [ 'last_activity_timestamp' ] > $_SESSION [ 'expiration_timestamp' ];
@@ -139,9 +138,9 @@ class session
     public function debug ()
     {
         $debug = var_export ( $_SESSION, true );
-        file_put_contents ( 'session_dump.txt', $debug . "\n\n", FILE_APPEND );
+        return $debug;
     }
-    
+
     public function uuid ()
     {
         // http://stackoverflow.com/questions/2040240/php-function-to-generate-v4-uuid
