@@ -5,9 +5,11 @@ define ( 'php_session_id', 'sid' );
 class session
 {
     private $expiration_time;
+    private $session_name;
 
-    public function __construct ( $expiration_time = 3600 )
+    public function __construct ( $session_name = 'private', $expiration_time = 3600 )
     {
+        $this -> session_name = $session_name;
         $this -> expiration_time = $expiration_time;
         $this -> setup ();
         session_start ();
@@ -93,7 +95,7 @@ class session
         // and potentially cleaned up. Garbage collection may occur during session start
         // (depending on session.gc_probability and session.gc_divisor).
         ini_set ( 'session.gc_maxlifetime', 86400 );
-        session_name ( 'private' );
+        session_name ( $this -> session_name );
     }
 
     public function __destruct ()
